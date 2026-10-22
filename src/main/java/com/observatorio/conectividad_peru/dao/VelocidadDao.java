@@ -1,9 +1,8 @@
 package com.observatorio.conectividad_peru.dao;
 
-import com.observatorio.conectividad_peru.model.MetricasVelocidadSaturacion;
-import java.util.List;
+import java.util.Map;
 
 public interface VelocidadDao {
-    MetricasVelocidadSaturacion obtenerDatosVelocidad(String codigoUbigeo);
-    List<MetricasVelocidadSaturacion> obtenerDistritosMenoresA16Mbps();
+
+    Map<String, Object> obtenerVelocidadNacional();
 }

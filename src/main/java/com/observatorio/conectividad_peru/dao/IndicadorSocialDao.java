@@ -1,9 +1,11 @@
 package com.observatorio.conectividad_peru.dao;
 
-import com.observatorio.conectividad_peru.model.IndicadorLaboral;
-import com.observatorio.conectividad_peru.model.IndicadorEducativo;
+import java.util.List;
+import java.util.Map;
 
 public interface IndicadorSocialDao {
-    IndicadorLaboral obtenerIndicadorLaboral(String codigoUbigeo, int anio);
-    IndicadorEducativo obtenerIndicadorEducativo(String codigoUbigeo, int anio);
+
+    List<Map<String, Object>> obtenerIndicadoresTeletrabajo();
+
+    List<Map<String, Object>> obtenerIndicadoresEducacion();
 }

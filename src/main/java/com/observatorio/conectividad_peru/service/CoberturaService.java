@@ -1,8 +1,11 @@
 package com.observatorio.conectividad_peru.service;
 
-import com.observatorio.conectividad_peru.model.CoberturaOperadora;
 import java.util.List;
+import java.util.Map;
 
 public interface CoberturaService {
-    List<CoberturaOperadora> obtenerCoberturaPorDistrito(String codigoUbigeo);
+    Map<String, Object> obtenerKpisDashboard();
+    List<Map<String, Object>> obtenerDatosMapaNacional();
+    List<Map<String, Object>> obtenerParticipacionOperadoras();
+    List<Map<String, Object>> obtenerCoberturaPorDistrito(String codigoUbigeo);
 }

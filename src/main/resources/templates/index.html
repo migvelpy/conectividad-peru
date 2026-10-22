@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Observatorio de Conectividad en el Perú</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f6f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1 { color: #004080; }
+        ul { list-style-type: square; }
+        .badge { background: #e0f2fe; color: #0369a1; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🚀 Panel Principal - Observatorio de Conectividad</h1>
+    <p>Datos conectados exitosamente desde SQL Server mediante Stored Procedures.</p>
+</div>
+
+<!-- 1. KPIs del Dashboard (Mapeando las claves exactas que devuelve el SP) -->
+<div class="card">
+    <h3>📊 KPIs Principales del Sistema</h3>
+    <p>Regiones Analizadas: <span class="badge" th:text="${kpis.regiones_analizadas}">0</span></p>
+    <p>Total Antenas Activas: <span class="badge" th:text="${kpis.total_antenas_activas}">0</span></p>
+    <p>Cobertura Nacional 4G: <span class="badge" th:text="${kpis.cobertura_nacional_4g}">0</span>%</p>
+</div>
+
+<!-- 2. Lista Dinámica de Departamentos -->
+<div class="card">
+    <h3>📍 Departamentos Registrados en la BD</h3>
+    <ul>
+        <!-- Bucle iterativo de Thymeleaf -->
+        <li th:each="depto : ${departamentos}" th:text="${depto}">Nombre del Departamento</li>
+    </ul>
+</div>
+
+</body>
+</html>

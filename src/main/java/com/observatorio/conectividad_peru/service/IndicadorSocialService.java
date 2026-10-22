@@ -1,9 +1,9 @@
 package com.observatorio.conectividad_peru.service;
 
-import com.observatorio.conectividad_peru.model.IndicadorLaboral;
-import com.observatorio.conectividad_peru.model.IndicadorEducativo;
+import java.util.List;
+import java.util.Map;
 
 public interface IndicadorSocialService {
-    IndicadorLaboral obtenerIndicadorLaboralPorDistrito(String codigoUbigeo, int anio);
-    IndicadorEducativo obtenerIndicadorEducativoPorDistrito(String codigoUbigeo, int anio);
+    List<Map<String, Object>> obtenerIndicadoresTeletrabajo();
+    List<Map<String, Object>> obtenerIndicadoresEducacion();
 }

@@ -22,30 +22,16 @@ public class UbigeoServiceImpl implements UbigeoService {
 
     @Override
     public List<String> obtenerProvinciasPorDepartamento(String departamento) {
-        if (departamento == null || departamento.trim().isEmpty()) {
-            return List.of();
-        }
         return ubigeoDao.obtenerProvinciasPorDepartamento(departamento);
     }
 
     @Override
     public List<UbigeoDistrito> obtenerDistritosPorProvincia(String departamento, String provincia) {
-        if (departamento == null || provincia == null) {
-            return List.of();
-        }
         return ubigeoDao.obtenerDistritosPorProvincia(departamento, provincia);
     }
 
     @Override
     public ResumenMacroDto obtenerResumenMacroNacional() {
-        ResumenMacroDto resumen = ubigeoDao.obtenerResumenMacroNacional();
-
-        // Lógica de negocio: Redondear decimales para presentación en tarjetas de la vista
-        if (resumen != null) {
-            double velRedondeada = Math.round(resumen.getVelocidadPromedioNacional() * 100.0) / 100.0;
-            resumen.setVelocidadPromedioNacional(velRedondeada);
-        }
-
-        return resumen;
+        return ubigeoDao.obtenerResumenMacroNacional();
     }
 }

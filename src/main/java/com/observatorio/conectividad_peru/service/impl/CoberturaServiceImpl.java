@@ -1,12 +1,12 @@
 package com.observatorio.conectividad_peru.service.impl;
 
 import com.observatorio.conectividad_peru.dao.CoberturaDao;
-import com.observatorio.conectividad_peru.model.CoberturaOperadora;
 import com.observatorio.conectividad_peru.service.CoberturaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CoberturaServiceImpl implements CoberturaService {
@@ -15,15 +15,23 @@ public class CoberturaServiceImpl implements CoberturaService {
     private CoberturaDao coberturaDao;
 
     @Override
-    public List<CoberturaOperadora> obtenerCoberturaPorDistrito(String codigoUbigeo) {
-        List<CoberturaOperadora> lista = coberturaDao.obtenerCoberturaPorDistrito(codigoUbigeo);
+    public Map<String, Object> obtenerKpisDashboard() {
+        return coberturaDao.obtenerKpisDashboard();
+    }
 
-        // Lógica de negocio: Evaluar si la operadora tiene cobertura activa según número de antenas
-        for (CoberturaOperadora op : lista) {
-            int totalAntenas = op.getTotalAntenas3G() + op.getTotalAntenas4G() + op.getTotalAntenas5G();
-            op.setTieneCobertura(totalAntenas > 0);
-        }
+    @Override
+    public List<Map<String, Object>> obtenerDatosMapaNacional() {
+        return coberturaDao.obtenerDatosMapaNacional();
+    }
 
-        return lista;
+    @Override
+    public List<Map<String, Object>> obtenerParticipacionOperadoras() {
+        return coberturaDao.obtenerParticipacionOperadoras();
+    }
+
+    @Override
+    public List<Map<String, Object>> obtenerCoberturaPorDistrito(String codigoUbigeo) {
+        // Llama al Stored Procedure mediante el DAO
+        return coberturaDao.obtenerCoberturaPorDistrito(codigoUbigeo);
     }
 }
