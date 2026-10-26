@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Impacto en Teletrabajo | Observatorio de Conectividad</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #12263a;
+      --remoto: #0f7b8a;
+      --presencial: #b9c6d2;
+      --fondo: #f3f6f9;
+      --borde: #d5dde5;
+    }
+    body { font-family: 'IBM Plex Sans', system-ui, sans-serif; background: var(--fondo); color: var(--ink); }
+    h1 { font-weight: 600; letter-spacing: -.01em; }
+    .panel { background: #fff; border: 1px solid var(--borde); border-radius: 6px; }
+    .dato { font-size: 2rem; font-weight: 600; line-height: 1.1; color: var(--remoto); }
+    .tabla-scroll { max-height: 480px; overflow-y: auto; }
+    thead th { position: sticky; top: 0; background: #fff; z-index: 1; }
+    .barra-mini { height: 6px; background: var(--presencial); border-radius: 3px; min-width: 80px; }
+    .barra-mini > span { display: block; height: 100%; background: var(--remoto); border-radius: 3px; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--remoto); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+<main class="container py-4 py-lg-5">
+
+  <header class="mb-4">
+    <h1 class="h2 mb-2">Impacto en teletrabajo</h1>
+    <p class="mb-0 col-lg-8">Porcentaje de trabajadores que trabajan a distancia frente a los que van al centro de trabajo, por departamento.</p>
+  </header>
+
+  <div>
+
+    <!-- Resumen (se calcula en JS a partir de la tabla) -->
+    <section class="row g-3 mb-4" aria-label="Resumen">
+      <div class="col-6 col-lg-3">
+        <div class="panel p-3 h-100">
+          <div class="dato" id="kpiPromedio">–</div>
+          <div class="small text-secondary">Promedio de teletrabajo</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="panel p-3 h-100">
+          <div class="dato" id="kpiMax">–</div>
+          <div class="small text-secondary" id="kpiMaxDep">Mayor adopción</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="panel p-3 h-100">
+          <div class="dato" id="kpiMin">–</div>
+          <div class="small text-secondary" id="kpiMinDep">Menor adopción</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="panel p-3 h-100">
+          <div class="dato" id="kpiTotal">–</div>
+          <div class="small text-secondary">Trabajadores en total</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gráfico -->
+    <section class="panel p-3 p-lg-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+        <div>
+          <h2 class="h5 mb-1" id="tituloGrafico">Adopción del teletrabajo por departamento</h2>
+          <p class="small text-secondary mb-0" id="descGrafico"></p>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" id="selectorTipo" aria-label="Tipo de gráfico">
+          <button type="button" class="btn btn-outline-secondary active" data-tipo="barras">Barras</button>
+          <button type="button" class="btn btn-outline-secondary" data-tipo="columnas">Columnas</button>
+          <button type="button" class="btn btn-outline-secondary" data-tipo="apiladas">Apiladas</button>
+          <button type="button" class="btn btn-outline-secondary" data-tipo="dona">Dona</button>
+        </div>
+      </div>
+      <div id="contenedorGrafico" style="position: relative; height: 600px;">
+        <canvas id="graficoTeletrabajo" role="img"
+                aria-label="Gráfico del teletrabajo por departamento"></canvas>
+      </div>
+    </section>
+
+    <!-- Tabla -->
+    <section class="panel p-3 p-lg-4">
+      <h2 class="h5 mb-3">Detalle por departamento</h2>
+      <div class="tabla-scroll">
+        <table class="table table-hover align-middle mb-0" id="tablaTeletrabajo">
+          <thead>
+            <tr>
+              <th scope="col">Departamento</th>
+              <th scope="col" class="text-end">Trabajadores</th>
+              <th scope="col" class="text-end">Teletrabajo (%)</th>
+              <th scope="col" class="text-end">Presencial (%)</th>
+              <th scope="col" class="d-none d-md-table-cell">Adopción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-dep="PIURA" data-total="695" data-tele="0.0" data-pres="92.23">
+              <td>PIURA</td>
+              <td class="text-end">695</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">92.23</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="AMAZONAS" data-total="337" data-tele="0.0" data-pres="88.13">
+              <td>AMAZONAS</td>
+              <td class="text-end">337</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">88.13</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="LIMA" data-total="2226" data-tele="0.0" data-pres="84.82">
+              <td>LIMA</td>
+              <td class="text-end">2,226</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">84.82</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="AYACUCHO" data-total="270" data-tele="0.0" data-pres="95.19">
+              <td>AYACUCHO</td>
+              <td class="text-end">270</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">95.19</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="CALLAO" data-total="567" data-tele="0.0" data-pres="87.3">
+              <td>CALLAO</td>
+              <td class="text-end">567</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">87.30</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="AREQUIPA" data-total="681" data-tele="0.0" data-pres="91.34">
+              <td>AREQUIPA</td>
+              <td class="text-end">681</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">91.34</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="LA LIBERTAD" data-total="586" data-tele="0.0" data-pres="89.59">
+              <td>LA LIBERTAD</td>
+              <td class="text-end">586</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">89.59</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="MADRE DE DIOS" data-total="250" data-tele="0.0" data-pres="97.6">
+              <td>MADRE DE DIOS</td>
+              <td class="text-end">250</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">97.60</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="TACNA" data-total="563" data-tele="0.0" data-pres="93.07">
+              <td>TACNA</td>
+              <td class="text-end">563</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">93.07</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="APURIMAC" data-total="270" data-tele="0.0" data-pres="97.04">
+              <td>APURIMAC</td>
+              <td class="text-end">270</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">97.04</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="PASCO" data-total="292" data-tele="0.0" data-pres="93.49">
+              <td>PASCO</td>
+              <td class="text-end">292</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">93.49</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="HUANCAVELICA" data-total="236" data-tele="0.0" data-pres="83.9">
+              <td>HUANCAVELICA</td>
+              <td class="text-end">236</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">83.90</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="SAN MARTIN" data-total="469" data-tele="0.0" data-pres="95.95">
+              <td>SAN MARTIN</td>
+              <td class="text-end">469</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">95.95</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="LORETO" data-total="414" data-tele="0.0" data-pres="95.17">
+              <td>LORETO</td>
+              <td class="text-end">414</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">95.17</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="LAMBAYEQUE" data-total="675" data-tele="0.0" data-pres="90.52">
+              <td>LAMBAYEQUE</td>
+              <td class="text-end">675</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">90.52</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="TUMBES" data-total="355" data-tele="0.0" data-pres="92.11">
+              <td>TUMBES</td>
+              <td class="text-end">355</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">92.11</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="ANCASH" data-total="454" data-tele="0.0" data-pres="85.46">
+              <td>ANCASH</td>
+              <td class="text-end">454</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">85.46</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="CUSCO" data-total="340" data-tele="0.0" data-pres="91.18">
+              <td>CUSCO</td>
+              <td class="text-end">340</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">91.18</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="UCAYALI" data-total="446" data-tele="0.0" data-pres="96.19">
+              <td>UCAYALI</td>
+              <td class="text-end">446</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">96.19</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="CAJAMARCA" data-total="366" data-tele="0.0" data-pres="85.79">
+              <td>CAJAMARCA</td>
+              <td class="text-end">366</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">85.79</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="MOQUEGUA" data-total="385" data-tele="0.0" data-pres="94.03">
+              <td>MOQUEGUA</td>
+              <td class="text-end">385</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">94.03</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="HUANUCO" data-total="295" data-tele="0.0" data-pres="94.58">
+              <td>HUANUCO</td>
+              <td class="text-end">295</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">94.58</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="ICA" data-total="662" data-tele="0.0" data-pres="90.33">
+              <td>ICA</td>
+              <td class="text-end">662</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">90.33</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="JUNIN" data-total="548" data-tele="0.0" data-pres="93.43">
+              <td>JUNIN</td>
+              <td class="text-end">548</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">93.43</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+            <tr data-dep="PUNO" data-total="299" data-tele="0.0" data-pres="93.65">
+              <td>PUNO</td>
+              <td class="text-end">299</td>
+              <td class="text-end">0.00</td>
+              <td class="text-end">93.65</td>
+              <td class="d-none d-md-table-cell"><div class="barra-mini"><span style="width:0%"></span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  // Lee los datos desde las filas que Thymeleaf ya pintó (data-*), sin serializar objetos a JSON.
+  const filas = Array.from(document.querySelectorAll('#tablaTeletrabajo tbody tr')).map(tr => ({
+    dep:   tr.dataset.dep,
+    total: parseFloat(tr.dataset.total) || 0,
+    tele:  parseFloat(tr.dataset.tele)  || 0,
+    pres:  parseFloat(tr.dataset.pres)  || 0
+  }));
+
+  if (filas.length) {
+    // Si la base no trae teletrabajo, se estima como 100% - presencial y se etiqueta como estimación
+    const estimado = filas.every(f => f.tele === 0);
+    if (estimado) filas.forEach(f => { f.tele = Math.max(0, 100 - f.pres); });
+    const ETQ = estimado ? 'No presencial (estimado)' : 'Teletrabajo';
+    const ordenadas = [...filas].sort((a, b) => b.tele - a.tele);
+    const fmt = n => n.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Resumen
+    const totalTrab = filas.reduce((s, f) => s + f.total, 0);
+    const promedio  = totalTrab > 0
+      ? filas.reduce((s, f) => s + f.tele * f.total, 0) / totalTrab   // ponderado por trabajadores
+      : filas.reduce((s, f) => s + f.tele, 0) / filas.length;
+    const mayor = ordenadas[0];
+    const menor = ordenadas[ordenadas.length - 1];
+
+    document.getElementById('kpiPromedio').textContent = fmt(promedio) + '%';
+    document.getElementById('kpiMax').textContent = fmt(mayor.tele) + '%';
+    document.getElementById('kpiMaxDep').textContent = 'Mayor valor: ' + mayor.dep;
+    document.getElementById('kpiMin').textContent = fmt(menor.tele) + '%';
+    document.getElementById('kpiMinDep').textContent = 'Menor valor: ' + menor.dep;
+    document.getElementById('kpiTotal').textContent = totalTrab.toLocaleString('es-PE');
+
+    const TEAL = '#0f7b8a', TEAL_CLARO = '#8cc3cb', GRIS = '#b9c6d2';
+    const contenedor = document.getElementById('contenedorGrafico');
+    const desc = document.getElementById('descGrafico');
+    let grafico;
+
+    function dibujar(tipo) {
+      if (grafico) grafico.destroy();
+      let cfg, alto;
+
+      if (tipo === 'dona') {
+        // Cómo se reparten los trabajadores remotos entre departamentos
+        const remotos = ordenadas.map(f => ({ dep: f.dep, n: f.total * f.tele / 100 }))
+                                 .filter(x => x.n > 0).sort((a, b) => b.n - a.n);
+        const top = remotos.slice(0, 8);
+        const otros = remotos.slice(8).reduce((s, x) => s + x.n, 0);
+        const etiquetas = top.map(x => x.dep), datos = top.map(x => x.n);
+        const colores = ['#0b4f59','#0f7b8a','#2a98a6','#4fb0bc','#7cc6cf','#a5d8de','#c4e5e9','#dff1f3'].slice(0, top.length);
+        if (otros > 0) { etiquetas.push('Otros departamentos'); datos.push(otros); colores.push(GRIS); }
+        desc.textContent = 'Cómo se reparten los trabajadores ' + (estimado ? 'no presenciales (estimado)' : 'remotos') + ' entre los departamentos con más casos.';
+        alto = 420;
+        cfg = {
+          type: 'doughnut',
+          data: { labels: etiquetas, datasets: [{ data: datos, backgroundColor: colores, borderWidth: 1 }] },
+          options: { responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'right' },
+              tooltip: { callbacks: { label: c => c.label + ': ' + Math.round(c.parsed).toLocaleString('es-PE') + (estimado ? ' no presenciales (est.)' : ' remotos') } } } }
+        };
+      } else if (tipo === 'apiladas') {
+        desc.textContent = 'Proporción entre ' + ETQ.toLowerCase() + ' y presencial (cada barra suma 100%).';
+        alto = Math.max(320, ordenadas.length * 28);
+        cfg = {
+          type: 'bar',
+          data: { labels: ordenadas.map(f => f.dep), datasets: [
+            { label: ETQ + ' (%)', data: ordenadas.map(f => f.tele), backgroundColor: TEAL },
+            { label: 'Presencial (%)',  data: ordenadas.map(f => f.pres), backgroundColor: GRIS } ] },
+          options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: { tooltip: { callbacks: { label: c => c.dataset.label + ': ' + fmt(c.parsed.x) + '%' } } },
+            scales: { x: { stacked: true, max: 100, title: { display: true, text: 'Porcentaje de trabajadores' } },
+                      y: { stacked: true, grid: { display: false } } } }
+        };
+      } else {
+        // Barras / columnas: solo teletrabajo, con su propia escala para que se note
+        const horizontal = tipo === 'barras';
+        desc.textContent = 'Solo ' + ETQ.toLowerCase() + ', con escala propia. Color intenso: sobre el promedio (' + fmt(promedio) + '%); claro: bajo el promedio.';
+        alto = horizontal ? Math.max(320, ordenadas.length * 28) : 420;
+        cfg = {
+          type: 'bar',
+          data: { labels: ordenadas.map(f => f.dep), datasets: [{
+            label: ETQ + ' (%)', data: ordenadas.map(f => f.tele),
+            backgroundColor: ordenadas.map(f => f.tele >= promedio ? TEAL : TEAL_CLARO) }] },
+          options: { indexAxis: horizontal ? 'y' : 'x', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false },
+              tooltip: { callbacks: {
+                label: c => ETQ + ': ' + fmt(c.parsed[horizontal ? 'x' : 'y']) + '%',
+                afterLabel: c => 'Presencial: ' + fmt(ordenadas[c.dataIndex].pres) + '%' } } },
+            scales: horizontal
+              ? { x: { beginAtZero: true, title: { display: true, text: ETQ + ' (%)' } }, y: { grid: { display: false } } }
+              : { y: { beginAtZero: true, title: { display: true, text: ETQ + ' (%)' } }, x: { grid: { display: false } } } }
+        };
+      }
+      contenedor.style.height = alto + 'px';
+      grafico = new Chart(document.getElementById('graficoTeletrabajo'), cfg);
+    }
+
+    document.querySelectorAll('#selectorTipo button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#selectorTipo button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        dibujar(btn.dataset.tipo);
+      });
+    });
+    if (estimado) {
+      document.getElementById('tituloGrafico').textContent = 'No presencial (estimado) por departamento';
+      document.getElementById('kpiPromedio').nextElementSibling.textContent = 'Promedio no presencial (estimado)';
+    }
+    dibujar('barras');
+  }
+</script>
+</body>
+</html>
