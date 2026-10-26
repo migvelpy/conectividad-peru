@@ -15,339 +15,325 @@
             --primary-dark: #1A3644;
             --teal-light: #489A9C;
             --teal-dark: #206F70;
-            border-radius: 12px;
         }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; color: #333; }
 
-        body {
-            background-color: var(--bg-body);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-        }
-
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            margin-bottom: 20px;
-        }
-
-        .btn-custom-dark {
-            background-color: var(--primary-dark);
+        /* Utilidades para la nueva web */
+        .hero-section {
+            background: linear-gradient(rgba(26, 54, 68, 0.85), rgba(32, 111, 112, 0.85)), url('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
             color: white;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            padding: 120px 0;
         }
+        .about-section { background-color: #ffffff; padding: 80px 0; }
+        .dashboard-section { background-color: var(--bg-body); padding: 60px 0; }
+        .footer-section { background-color: #11222b; color: #a0aec0; padding: 50px 0 20px 0; }
+        .footer-section a { color: #a0aec0; text-decoration: none; transition: color 0.3s;}
+        .footer-section a:hover { color: white; }
 
-        .btn-custom-dark:hover {
-            background-color: #122630;
-            color: white;
-        }
-
-        /* Top Module Cards */
-        .module-card {
-            border: 1.5px solid #E5E7EB;
-        }
-        .module-card.active {
-            border-color: var(--teal-dark);
-        }
-
-        /* KPI Cards */
-        .kpi-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-        .kpi-trend {
-            font-size: 0.85rem;
-            font-weight: 600;
-            background-color: #E8F5E9;
-            color: #2E7D32;
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-        .kpi-trend.neutral {
-            background-color: #F1F3F5;
-            color: #6C757D;
-        }
-
-        .chart-container {
-            height: 300px;
-            width: 100%;
-        }
-
-        .map-container {
-            height: 500px;
-            width: 100%;
-        }
+        /* Estilos del Dashboard (Intactos) */
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
+        .btn-custom-dark { background-color: var(--primary-dark); color: white; border-radius: 8px; font-weight: 500; }
+        .btn-custom-dark:hover { background-color: #122630; color: white; }
+        .module-card { border: 1.5px solid #E5E7EB; transition: transform 0.2s;}
+        .module-card:hover { transform: translateY(-3px); border-color: var(--teal-dark); }
+        .kpi-value { font-size: 2.2rem; font-weight: 700; color: var(--primary-dark); }
+        .chart-container { height: 300px; width: 100%; }
+        .map-container { height: 500px; width: 100%; }
     </style>
 </head>
 <body>
 
-<div class="container-fluid px-4 py-3">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-                <span class="badge rounded-pill bg-info text-dark bg-opacity-25 mb-2">
-                    <i class="bi bi-circle-fill text-info small"></i> DATOS DEMOSTRATIVOS
-                </span>
-            <h2 class="fw-bold text-dark mb-0">Observatorio de Conectividad en el Perú</h2>
-        </div>
-        <div>
-            <select class="form-select border-0 shadow-sm bg-white fw-bold text-dark">
-                <option>III trimestre 2025</option>
-            </select>
+<!-- 1. NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background-color: var(--primary-dark);">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-broadcast"></i> OCP</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto fw-semibold">
+                <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="#nosotros">Sobre el Proyecto</a></li>
+                <li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard Nacional</a></li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <!-- 4 Botones Superiores (Módulos) -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card module-card active h-100 p-3">
-                <h6 class="fw-bold mb-3">Cobertura territorial</h6>
-                <button class="btn btn-custom-dark w-100 mt-auto">Explorar cobertura <i class="bi bi-arrow-up-right"></i></button>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card module-card h-100 p-3">
-                <h6 class="fw-bold mb-3">Evolución de indicadores</h6>
-                <button class="btn btn-custom-dark w-100 mt-auto">Ver indicadores <i class="bi bi-arrow-up-right"></i></button>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card module-card h-100 p-3">
-                <h6 class="fw-bold mb-3">Comparador regional</h6>
-                <button class="btn btn-custom-dark w-100 mt-auto">Comparar regiones <i class="bi bi-arrow-up-right"></i></button>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card module-card h-100 p-3">
-                <h6 class="fw-bold mb-3">Datos abiertos</h6>
-                <button class="btn btn-custom-dark w-100 mt-auto">Consultar datos <i class="bi bi-arrow-up-right"></i></button>
+<!-- 2. HERO SECTION (PORTADA) -->
+<section id="inicio" class="hero-section text-center text-md-start">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="badge bg-info text-dark mb-3 px-3 py-2 rounded-pill fw-bold">VERSIÓN 1.0 - 2026</span>
+                <h1 class="display-4 fw-bold mb-4">Observatorio de Conectividad en el Perú</h1>
+                <p class="lead mb-5" style="color: #e2e8f0;">Democratizando el acceso a la información de la infraestructura de telecomunicaciones. Analiza, compara y descubre la realidad de la conectividad en todas las regiones del país.</p>
+                <a href="#dashboard" class="btn btn-light btn-lg px-4 fw-bold text-dark me-2">Ver Estadísticas</a>
+                <a href="#nosotros" class="btn btn-outline-light btn-lg px-4 fw-bold">Conocer Más</a>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Cuerpo Principal -->
-    <div class="row mb-2">
-        <!-- Izquierda: Mapa del Perú -->
-        <div class="col-lg-8">
-            <div class="card h-100 p-4">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="fw-bold">Conectividad en el territorio</h5>
-                    <select class="form-select form-select-sm w-auto">
-                        <option>Cobertura 4G</option>
+<!-- 3. SECCIÓN SOBRE NOSOTROS / QUÉ OFRECEMOS -->
+<section id="nosotros" class="about-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark">Nuestro Propósito</h2>
+            <p class="text-muted">Una plataforma diseñada para visibilizar la brecha digital y promover la inclusión tecnológica.</p>
+        </div>
+        <div class="row g-4 mt-3">
+            <div class="col-md-4 text-center">
+                <div class="p-4 bg-light rounded-4 h-100">
+                    <i class="bi bi-hdd-network display-4" style="color: var(--teal-dark);"></i>
+                    <h5 class="fw-bold mt-4 mb-3">Infraestructura Real</h5>
+                    <p class="text-muted">Mapeamos la ubicación y estado de las antenas operativas a nivel nacional utilizando datos de Osiptel.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="p-4 bg-light rounded-4 h-100">
+                    <i class="bi bi-graph-up-arrow display-4" style="color: var(--teal-dark);"></i>
+                    <h5 class="fw-bold mt-4 mb-3">Impacto Socioeconómico</h5>
+                    <p class="text-muted">Cruzamos el acceso a internet con indicadores de teletrabajo y educación para medir el impacto real en la sociedad.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="p-4 bg-light rounded-4 h-100">
+                    <i class="bi bi-shield-check display-4" style="color: var(--teal-dark);"></i>
+                    <h5 class="fw-bold mt-4 mb-3">Datos Transparentes</h5>
+                    <p class="text-muted">Información abierta y centralizada para investigadores, empresas e instituciones públicas del Estado Peruano.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4. DASHBOARD (El corazón técnico de la web) -->
+<section id="dashboard" class="dashboard-section">
+    <div class="container-fluid px-lg-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-dark mb-0">Panel de Control Nacional</h3>
+            <div>
+                <!-- Filtro conectado al Backend mediante Formulario GET -->
+                <form action="/" method="GET" id="filtroForm">
+                    <select name="departamento" class="form-select border-0 shadow-sm fw-bold text-dark" onchange="document.getElementById('filtroForm').submit();">
+                        <option value="">Nivel Nacional</option>
+                        <option th:each="dep : ${departamentos}"
+                                th:value="${dep}"
+                                th:text="${dep}"
+                                th:selected="${param.departamento != null and param.departamento[0] == dep}">
+                        </option>
                     </select>
-                </div>
-                <!-- Contenedor del Mapa Highmaps -->
-                <div id="peru-map" class="map-container"></div>
+                </form>
             </div>
         </div>
 
-        <!-- Derecha: Gráficos -->
-        <div class="col-lg-4 d-flex flex-column">
-
-            <!-- Gráfico de Barras: Top 5 -->
-            <div class="card p-4 flex-fill mb-3">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <h6 class="fw-bold mb-0">¿Dónde se concentra el acceso?</h6>
-                        <small class="text-muted">Top 5 regiones</small>
-                    </div>
-                    <i class="bi bi-three-dots text-muted"></i>
-                </div>
-                <div id="bar-chart" class="chart-container" style="height: 200px;"></div>
-            </div>
-
-            <!-- Gráfico de Anillo: Fibra (Estático por ahora) -->
-            <div class="card p-4 flex-fill mb-3">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <h6 class="fw-bold mb-0">La fibra impulsa la conectividad</h6>
-                        <small class="text-muted">Composición de las conexiones</small>
-                    </div>
-                    <i class="bi bi-three-dots text-muted"></i>
-                </div>
-                <div id="donut-chart" class="chart-container" style="height: 220px;"></div>
-                <div class="alert alert-info py-2 px-3 mb-0 mt-2" style="background-color: #E0F2F1; border: none; color: #00695C; font-size: 0.85rem;">
-                    <i class="bi bi-info-circle me-1"></i> 7 de cada 10 conexiones utilizan fibra óptica.
+        <!-- ENLACES A LAS VISTAS DEL EQUIPO -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card module-card h-100 p-3">
+                    <h6 class="fw-bold mb-3">Cobertura y Operadoras</h6>
+                    <a href="/operadoras" class="btn btn-custom-dark w-100 mt-auto">Explorar mercado <i class="bi bi-arrow-up-right"></i></a>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="card module-card h-100 p-3">
+                    <h6 class="fw-bold mb-3">Velocidad y Latencia</h6>
+                    <a href="/velocidad" class="btn btn-custom-dark w-100 mt-auto">Ver rendimiento <i class="bi bi-arrow-up-right"></i></a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card module-card h-100 p-3">
+                    <h6 class="fw-bold mb-3">Impacto: Teletrabajo</h6>
+                    <a href="/teletrabajo" class="btn btn-custom-dark w-100 mt-auto">Analizar adopción <i class="bi bi-arrow-up-right"></i></a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card module-card h-100 p-3">
+                    <h6 class="fw-bold mb-3">Impacto: Educación</h6>
+                    <a href="/educacion" class="btn btn-custom-dark w-100 mt-auto">Brecha digital <i class="bi bi-arrow-up-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAPA Y GRÁFICOS -->
+        <div class="row mb-2">
+            <div class="col-lg-8">
+                <div class="card h-100 p-4">
+                    <h5 class="fw-bold mb-2">Conectividad en el territorio</h5>
+                    <div id="peru-map" class="map-container"></div>
+                </div>
+            </div>
+            <div class="col-lg-4 d-flex flex-column">
+                <div class="card p-4 flex-fill mb-3">
+                    <h6 class="fw-bold mb-0">¿Dónde se concentra el acceso?</h6>
+                    <small class="text-muted mb-2">Top 5 regiones</small>
+                    <div id="bar-chart" class="chart-container" style="height: 200px;"></div>
+                </div>
+                <div class="card p-4 flex-fill mb-3">
+                    <h6 class="fw-bold mb-0">La fibra impulsa la conectividad</h6>
+                    <small class="text-muted mb-2">Composición tecnológica</small>
+                    <div id="donut-chart" class="chart-container" style="height: 220px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <h5 class="fw-bold mb-3 mt-4">Métricas Nacionales en Tiempo Real</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between"><span class="text-muted fw-bold">Cobertura móvil 4G</span><i class="bi bi-broadcast text-muted"></i></div>
+                    <div class="kpi-value my-2">
+                        <span th:text="${kpis != null and kpis.get('cobertura_nacional_4g') != null ? #numbers.formatDecimal(kpis.get('cobertura_nacional_4g'), 1, 2) : '0.00'}"></span>
+                        <span class="fs-4 text-muted">%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between"><span class="text-muted fw-bold">Antenas Activas</span><i class="bi bi-hdd-network text-muted"></i></div>
+                    <div class="kpi-value my-2" th:text="${kpis != null and kpis.get('total_antenas_activas') != null ? kpis.get('total_antenas_activas') : '0'}">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between"><span class="text-muted fw-bold">Regiones Analizadas</span><i class="bi bi-map text-muted"></i></div>
+                    <div class="kpi-value my-2">
+                        <span th:text="${kpis != null and kpis.get('regiones_analizadas') != null ? kpis.get('regiones_analizadas') : '0'}"></span>
+                        <span class="fs-4 text-muted">/ 25</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between"><span class="text-muted fw-bold">Conexiones fibra</span><i class="bi bi-router text-muted"></i></div>
+                    <div class="kpi-value my-2">4.00 <span class="fs-4 text-muted">M</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- 5. FOOTER (Pie de página) -->
+<footer class="footer-section">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="text-white fw-bold"><i class="bi bi-broadcast"></i> Observatorio Perú</h5>
+                <p class="small mt-3">Proyecto académico de Ingeniería de Sistemas enfocado en la centralización y análisis de datos de telecomunicaciones mediante arquitectura MVC y bases de datos relacionales.</p>
+            </div>
+            <div class="col-md-2 offset-md-2 mb-4 mb-md-0">
+                <h6 class="text-white fw-bold">Navegación</h6>
+                <ul class="list-unstyled small mt-3">
+                    <li class="mb-2"><a href="#inicio">Inicio</a></li>
+                    <li class="mb-2"><a href="#nosotros">Sobre Nosotros</a></li>
+                    <li class="mb-2"><a href="#dashboard">Dashboard</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-white fw-bold">Tecnologías Utilizadas</h6>
+                <div class="mt-3">
+                    <span class="badge bg-secondary me-1 mb-1">Java Spring Boot</span>
+                    <span class="badge bg-secondary me-1 mb-1">SQL Server</span>
+                    <span class="badge bg-secondary me-1 mb-1">Thymeleaf</span>
+                    <span class="badge bg-secondary me-1 mb-1">Bootstrap 5</span>
+                    <span class="badge bg-secondary me-1 mb-1">Highcharts</span>
+                </div>
+            </div>
+        </div>
+        <hr style="border-color: #2d3748;">
+        <div class="text-center small mt-4">
+            &copy; 2026 Observatorio de Conectividad. Proyecto de Ingeniería de Sistemas. Todos los derechos reservados.
         </div>
     </div>
+</footer>
 
-    <!-- Métricas KPIs Estáticas -->
-    <h5 class="fw-bold mb-3 mt-2">Métricas KPIs</h5>
-    <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-bold">Cobertura móvil 4G</span>
-                    <i class="bi bi-broadcast text-muted"></i>
-                </div>
-                <div class="kpi-value my-2">82,4 <span class="fs-4 text-muted">%</span></div>
-                <div><span class="kpi-trend"><i class="bi bi-graph-up"></i> +2,4 pp</span> <small class="text-muted ms-1">vs. III trim. 2024</small></div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-bold">Líneas móviles activas</span>
-                    <i class="bi bi-phone text-muted"></i>
-                </div>
-                <div class="kpi-value my-2">42,0 <span class="fs-4 text-muted">M</span></div>
-                <div><span class="kpi-trend"><i class="bi bi-graph-up"></i> +2,1%</span> <small class="text-muted ms-1">vs. III trim. 2024</small></div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-bold">Conexiones de internet fijo</span>
-                    <i class="bi bi-router text-muted"></i>
-                </div>
-                <div class="kpi-value my-2">4,00 <span class="fs-4 text-muted">M</span></div>
-                <div><span class="kpi-trend"><i class="bi bi-graph-up"></i> +6,4%</span> <small class="text-muted ms-1">vs. III trim. 2024</small></div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-bold">Regiones analizadas</span>
-                    <i class="bi bi-map text-muted"></i>
-                </div>
-                <div class="kpi-value my-2">25 <span class="fs-4 text-muted">/ 25</span></div>
-                <div><span class="kpi-trend neutral">- Sin variación</span></div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<!-- Scripts de Bootstrap y Highcharts/Highmaps -->
+<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 <script src="https://code.highcharts.com/mapdata/countries/pe/pe-all.js"></script>
 
-<!-- Inyección de Datos desde Spring Boot via Thymeleaf -->
+<!-- SCRIPT DEL DASHBOARD (EL QUE ACABAMOS DE REPARAR) -->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // El backend debe inyectar List<Map<String, Object>> bajo el atributo "top5Regiones"
-    // Ejemplo esperado de BD: [{region: 'LIMA', valor: 96.8}, {region: 'AREQUIPA', valor: 85.5}...]
-    var datosBackend = /*[[${top5Regiones}]]*/ [
-        { region: "LIMA", valor: 2.00 },
-        { region: "AREQUIPA", valor: 0.40 },
-        { region: "LA LIBERTAD", valor: 0.32 },
-        { region: "PIURA", valor: 0.28 },
-        { region: "CUSCO", valor: 0.20 }
-    ];
+    var mapaDatosBd = /*[[${mapaDatos}]]*/ [];
+    var top5DatosBd = /*[[${top5Regiones}]]*/ [];
     /*]]>*/
 
     document.addEventListener('DOMContentLoaded', function () {
-
-        // 1. Preparar datos para el Top 5 (Gráfico de Barras)
-        let categoriasBarras = datosBackend.map(d => d.region.charAt(0) + d.region.slice(1).toLowerCase());
-        let valoresBarras = datosBackend.map(d => d.valor);
-
-        // 2. Preparar datos para el Mapa
-        // Highmaps usa la propiedad 'name' (Ej: "Lima", "Cusco") para vincular los datos geográficos
-        let datosMapa = datosBackend.map(d => {
-            // Capitalizar texto: "LIMA" -> "Lima" para que coincida con la librería de mapas
-            let nombreCapitalizado = d.region.charAt(0).toUpperCase() + d.region.slice(1).toLowerCase();
-            return {
-                name: nombreCapitalizado,
-                value: d.valor
+        try {
+            const capitalizar = (str) => {
+                if (!str) return 'Desconocido';
+                return String(str).toLowerCase().split(' ').map(word =>
+                    word === 'de' ? word : word.charAt(0).toUpperCase() + word.slice(1)
+                ).join(' ');
             };
-        });
 
-        // RENDERIZAR MAPA DEL PERÚ
-        Highcharts.mapChart('peru-map', {
-            chart: { map: 'countries/pe/pe-all', backgroundColor: 'transparent' },
-            title: { text: null },
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: { verticalAlign: 'top' }
-            },
-            colorAxis: {
-                min: 0,
-                stops: [
-                    [0, '#E0F2F1'],
-                    [0.5, '#489A9C'],
-                    [1, '#1A3644']
-                ]
-            },
-            series: [{
-                data: datosMapa,
-                joinBy: 'name',
-                name: 'Conectividad',
-                states: { hover: { color: '#FFB300' } },
-                dataLabels: {
-                    enabled: false,
-                    format: '{point.name}'
-                }
-            }],
-            credits: { enabled: false }
-        });
+            let categoriasBarras = top5DatosBd.map(d => capitalizar(d.departamento || d.DEPARTAMENTO || ''));
+            let valoresBarras = top5DatosBd.map(d => parseFloat(d.porcentaje_4g || d.PORCENTAJE_4G || 0));
 
-        // RENDERIZAR GRÁFICO DE BARRAS HORIZONTALES (Top 5)
-        Highcharts.chart('bar-chart', {
-            chart: { type: 'bar', backgroundColor: 'transparent' },
-            title: { text: null },
-            xAxis: {
-                categories: categoriasBarras,
-                lineWidth: 0,
-                tickWidth: 0
-            },
-            yAxis: {
+            let datosMapa = mapaDatosBd.map(d => {
+                return {
+                    name: capitalizar(d.departamento || d.DEPARTAMENTO || ''),
+                    value: parseFloat(d.porcentaje_4g || d.PORCENTAJE_4G || 0)
+                };
+            });
+
+            Highcharts.mapChart('peru-map', {
+                chart: { map: 'countries/pe/pe-all', backgroundColor: 'transparent' },
                 title: { text: null },
-                gridLineColor: '#F0F0F0'
-            },
-            plotOptions: {
-                bar: {
-                    borderRadius: 4,
-                    color: '#206F70', // Teal color matching the image
-                    dataLabels: {
-                        enabled: true,
-                        format: '{y} M', // Puedes quitar la M si los datos de la BD son %
-                        style: { fontWeight: 'normal' }
+                mapNavigation: { enabled: true, buttonOptions: { verticalAlign: 'top' } },
+                colorAxis: {
+                    min: 0,
+                    stops: [ [0, '#E0F2F1'], [0.5, '#489A9C'], [1, '#1A3644'] ]
+                },
+                series: [{
+                    data: datosMapa, joinBy: 'name', name: 'Cobertura 4G (%)',
+                    states: { hover: { color: '#FFB300' } },
+                    dataLabels: { enabled: false, format: '{point.name}' },
+                    tooltip: { pointFormat: '{point.name}: <b>{point.value:.2f}%</b>' }
+                }],
+                credits: { enabled: false }
+            });
+
+            Highcharts.chart('bar-chart', {
+                chart: { type: 'bar', backgroundColor: 'transparent' },
+                title: { text: null },
+                xAxis: { categories: categoriasBarras, lineWidth: 0, tickWidth: 0 },
+                yAxis: { title: { text: null }, gridLineColor: '#F0F0F0' },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4, color: '#206F70',
+                        dataLabels: { enabled: true, format: '{y:.2f}%', style: { fontWeight: 'normal' } }
                     }
-                }
-            },
-            legend: { enabled: false },
-            series: [{ name: 'Conexiones', data: valoresBarras }],
-            credits: { enabled: false }
-        });
+                },
+                legend: { enabled: false },
+                series: [{ name: 'Cobertura 4G', data: valoresBarras }],
+                credits: { enabled: false },
+                tooltip: { valueSuffix: '%' }
+            });
 
-        // RENDERIZAR GRÁFICO DE ANILLO ESTÁTICO (Fibra vs Cable)
-        Highcharts.chart('donut-chart', {
-            chart: { type: 'pie', backgroundColor: 'transparent' },
-            title: { text: null },
-            plotOptions: {
-                pie: {
-                    innerSize: '75%',
-                    dataLabels: { enabled: false },
-                    showInLegend: true,
-                    colors: ['#1A3644', '#489A9C', '#E0E0E0']
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
-                itemMarginTop: 10,
-                itemMarginBottom: 10
-            },
-            series: [{
-                name: 'Conexiones',
-                data: [
-                    { name: 'Fibra óptica', y: 70 },
-                    { name: 'Cable', y: 25 },
-                    { name: 'Otras', y: 5 }
-                ]
-            }],
-            credits: { enabled: false }
-        });
+            Highcharts.chart('donut-chart', {
+                chart: { type: 'pie', backgroundColor: 'transparent' },
+                title: { text: null },
+                plotOptions: {
+                    pie: { innerSize: '75%', dataLabels: { enabled: false }, showInLegend: true, colors: ['#1A3644', '#489A9C', '#E0E0E0'] }
+                },
+                series: [{
+                    name: 'Conexiones',
+                    data: [{ name: 'Fibra óptica', y: 70 }, { name: 'Cable', y: 25 }, { name: 'Otras', y: 5 }]
+                }],
+                credits: { enabled: false }
+            });
 
+        } catch (error) {
+            console.error("Error en JS:", error);
+        }
     });
 </script>
 </body>

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,14 +31,14 @@ public class InicioController {
     @Autowired
     private IndicadorSocialService indicadorSocialService;
     @GetMapping("/")
-    public String index(Model model) {
+    public String index (Model model) {
         List<Map<String, Object>> mapaCompleto = coberturaService.obtenerDatosMapaNacional();
 
         List<Map<String, Object>> top5 = mapaCompleto.stream().limit(5).collect(Collectors.toList());
         model.addAttribute("kpis", coberturaService.obtenerKpisDashboard());
         model.addAttribute("mapaDatos", coberturaService.obtenerDatosMapaNacional());
         model.addAttribute("departamentos", ubigeoService.obtenerDepartamentos());
-
+        model.addAttribute("top5Regiones" , top5);
         return "index";
     }
 //Prueba borrar despues XD

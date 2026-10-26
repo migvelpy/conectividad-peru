@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Impacto en Teletrabajo | Observatorio de Conectividad</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #12263a;
+      --remoto: #0f7b8a;
+      --presencial: #b9c6d2;
+      --fondo: #f3f6f9;
+      --borde: #d5dde5;
+    }
+    body { font-family: 'IBM Plex Sans', system-ui, sans-serif; background: var(--fondo); color: var(--ink); }
+    h1 { font-weight: 600; letter-spacing: -.01em; }
+    .panel { background: #fff; border: 1px solid var(--borde); border-radius: 6px; }
+    .dato { font-size: 2rem; font-weight: 600; line-height: 1.1; color: var(--remoto); }
+    .tabla-scroll { max-height: 480px; overflow-y: auto; }
+    thead th { position: sticky; top: 0; background: #fff; z-index: 1; }
+    .barra-mini { height: 6px; background: var(--presencial); border-radius: 3px; min-width: 80px; }
+    .barra-mini > span { display: block; height: 100%; background: var(--remoto); border-radius: 3px; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--remoto); outline-offset: 2px; }
+
+    /* Estilo adicional para el buscador */
+    .btn-remoto { background-color: var(--remoto); color: white; border-color: var(--remoto); }
+    .btn-remoto:hover { background-color: #0b5e69; color: white; }
+  </style>
+</head>
+<body>
+<main class="container py-4 py-lg-5">
+
+  <header class="mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
+    <div>
+      <h1 class="h2 mb-2">Impacto en teletrabajo</h1>
+      <p class="mb-0 text-secondary">Porcentaje de trabajadores a distancia frente a la modalidad presencial.</p>
+    </div>
+    <a href="/" class="btn btn-outline-secondary btn-sm fw-semibold">← Volver al Dashboard</a>
+  </header>
+
+  <div>
+
+    <!-- Resumen (se calcula en JS a partir de la tabla) -->
+    <section class="row g-3 mb-4" aria-label="Resumen">
+      <div class="col-6 col-lg-3">
+        <div class="panel p-3 h-100">
+          <div class="dato" id="kpiPromedio">–</div>
+          <div class="small text-secondary">Promedio de teletrabajo</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="panel p-3 h-100">
+          <div class="dato" id="kpiMax">–</div>
+          <div class="small text-secondary" id="kpiMaxDep">Mayor adopción</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="panel p-3 h-100">
+          <div class="dato" id="kpiMin">–</div>
+          <div class="small text-secondary" id="kpiMinDep">Menor adopción</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="panel p-3 h-100">
+          <div class="dato" id="kpiTotal">–</div>
+          <div class="small text-secondary">Trabajadores en total</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gráfico -->
+    <section class="panel p-3 p-lg-4 mb-4 shadow-sm">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+        <div>
+          <h2 class="h5 mb-1" id="tituloGrafico">Adopción del teletrabajo por departamento</h2>
+          <p class="small text-secondary mb-0" id="descGrafico"></p>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" id="selectorTipo" aria-label="Tipo de gráfico">
+          <button type="button" class="btn btn-outline-secondary active" data-tipo="barras">Barras</button>
+          <button type="button" class="btn btn-outline-secondary" data-tipo="columnas">Columnas</button>
+          <button type="button" class="btn btn-outline-secondary" data-tipo="apiladas">Apiladas</button>
+          <button type="button" class="btn btn-outline-secondary" data-tipo="dona">Dona</button>
+        </div>
+      </div>
+      <div id="contenedorGrafico" style="position: relative; height: 600px;">
+        <canvas id="graficoTeletrabajo" role="img" aria-label="Gráfico del teletrabajo por departamento"></canvas>
+      </div>
+    </section>
+
+    <!-- Tabla de Detalles (Oculta por defecto con Buscador) -->
+    <section class="panel p-3 p-lg-4 shadow-sm">
+
+      <!-- Controles de búsqueda -->
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h2 class="h5 mb-0">Detalle por departamento</h2>
+        <div class="d-flex w-100 w-md-auto gap-2">
+          <input type="text" id="buscadorTeletrabajo" class="form-control form-control-sm" placeholder="🔍 Buscar departamento...">
+          <button id="btnMostrarTodos" class="btn btn-sm btn-outline-secondary text-nowrap fw-semibold">
+            Mostrar Todos
+          </button>
+        </div>
+      </div>
+
+      <!-- Estado Vacío -->
+      <div id="mensajeVacio" class="text-center py-5 text-secondary">
+        <h1 class="display-4 mb-3">📁</h1>
+        <p class="mb-0">Utiliza el buscador para encontrar un departamento o haz clic en "Mostrar Todos".</p>
+      </div>
+
+      <!-- Contenedor de la Tabla -->
+      <div class="tabla-scroll" id="contenedorTabla" style="display: none;">
+        <table class="table table-hover align-middle mb-0" id="tablaTeletrabajo">
+          <thead>
+          <tr>
+            <th scope="col">Departamento</th>
+            <th scope="col" class="text-end">Trabajadores</th>
+            <th scope="col" class="text-end">Teletrabajo (%)</th>
+            <th scope="col" class="text-end">Presencial (%)</th>
+            <th scope="col" class="d-none d-md-table-cell">Adopción</th>
+          </tr>
+          </thead>
+          <tbody id="tablaCuerpo">
+          <!-- Iteración Thymeleaf conectada a tu BD -->
+          <tr th:each="fila : ${listaTeletrabajo}" class="fila-departamento"
+              th:data-dep="${fila.departamento}"
+              th:data-total="${fila.total_trabajadores}"
+              th:data-tele="${fila.pct_teletrabajo}"
+              th:data-pres="${fila.pct_presencial}">
+
+            <td class="fw-semibold text-capitalize" th:text="${fila.departamento}">Lima</td>
+            <td class="text-end" th:text="${#numbers.formatInteger(fila.total_trabajadores, 1, 'POINT')}">0</td>
+            <td class="text-end fw-bold" style="color: var(--remoto);">
+              <span th:text="${#numbers.formatDecimal(fila.pct_teletrabajo, 1, 2)}"></span>
+            </td>
+            <td class="text-end text-secondary">
+              <span th:text="${#numbers.formatDecimal(fila.pct_presencial, 1, 2)}"></span>
+            </td>
+            <td class="d-none d-md-table-cell">
+              <div class="barra-mini">
+                <span th:style="'width:' + ${fila.pct_teletrabajo} + '%'"></span>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 1. LÓGICA DE GRÁFICOS (Corregida con los operadores matemáticos faltantes)
+    const filasDato = Array.from(document.querySelectorAll('#tablaTeletrabajo tbody tr')).map(tr => ({
+      dep:   tr.dataset.dep,
+      total: parseFloat(tr.dataset.total) || 0,
+      tele:  parseFloat(tr.dataset.tele)  || 0,
+      pres:  parseFloat(tr.dataset.pres)  || 0
+    }));
+
+    if (filasDato.length) {
+      const estimado = filasDato.every(f => f.tele === 0);
+      if (estimado) filasDato.forEach(f => { f.tele = Math.max(0, 100 - f.pres); });
+      const ETQ = estimado ? 'No presencial (estimado)' : 'Teletrabajo';
+      const ordenadas = [...filasDato].sort((a, b) => b.tele - a.tele);
+      const fmt = n => n.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Resumen KPI
+      const totalTrab = filasDato.reduce((s, f) => s + f.total, 0);
+      const promedio  = totalTrab > 0
+              ? filasDato.reduce((s, f) => s + (f.tele * f.total), 0) / totalTrab
+              : filasDato.reduce((s, f) => s + f.tele, 0) / filasDato.length;
+      const mayor = ordenadas[0];
+      const menor = ordenadas[ordenadas.length - 1];
+
+      document.getElementById('kpiPromedio').textContent = fmt(promedio) + '%';
+      document.getElementById('kpiMax').textContent = fmt(mayor.tele) + '%';
+      document.getElementById('kpiMaxDep').textContent = 'Mayor valor: ' + mayor.dep;
+      document.getElementById('kpiMin').textContent = fmt(menor.tele) + '%';
+      document.getElementById('kpiMinDep').textContent = 'Menor valor: ' + menor.dep;
+      document.getElementById('kpiTotal').textContent = totalTrab.toLocaleString('es-PE');
+
+      const TEAL = '#0f7b8a', TEAL_CLARO = '#8cc3cb', GRIS = '#b9c6d2';
+      const contenedor = document.getElementById('contenedorGrafico');
+      const desc = document.getElementById('descGrafico');
+      let grafico;
+
+      function dibujar(tipo) {
+        if (grafico) grafico.destroy();
+        let cfg, alto;
+
+        if (tipo === 'dona') {
+          const remotos = ordenadas.map(f => ({ dep: f.dep, n: (f.total * f.tele) / 100 }))
+                  .filter(x => x.n > 0).sort((a, b) => b.n - a.n);
+          const top = remotos.slice(0, 8);
+          const otros = remotos.slice(8).reduce((s, x) => s + x.n, 0);
+          const etiquetas = top.map(x => x.dep), datos = top.map(x => x.n);
+          const colores = ['#0b4f59','#0f7b8a','#2a98a6','#4fb0bc','#7cc6cf','#a5d8de','#c4e5e9','#dff1f3'].slice(0, top.length);
+          if (otros > 0) { etiquetas.push('Otros departamentos'); datos.push(otros); colores.push(GRIS); }
+          desc.textContent = 'Cómo se reparten los trabajadores ' + (estimado ? 'no presenciales (estimado)' : 'remotos') + ' entre los departamentos con más casos.';
+          alto = 420;
+          cfg = {
+            type: 'doughnut',
+            data: { labels: etiquetas, datasets: [{ data: datos, backgroundColor: colores, borderWidth: 1 }] },
+            options: { responsive: true, maintainAspectRatio: false,
+              plugins: { legend: { position: 'right' },
+                tooltip: { callbacks: { label: c => c.label + ': ' + Math.round(c.parsed).toLocaleString('es-PE') + (estimado ? ' no presenciales (est.)' : ' remotos') } } } }
+          };
+        } else if (tipo === 'apiladas') {
+          desc.textContent = 'Proporción entre ' + ETQ.toLowerCase() + ' y presencial (cada barra suma 100%).';
+          alto = Math.max(320, ordenadas.length * 28);
+          cfg = {
+            type: 'bar',
+            data: { labels: ordenadas.map(f => f.dep), datasets: [
+                { label: ETQ + ' (%)', data: ordenadas.map(f => f.tele), backgroundColor: TEAL },
+                { label: 'Presencial (%)',  data: ordenadas.map(f => f.pres), backgroundColor: GRIS } ] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+              plugins: { tooltip: { callbacks: { label: c => c.dataset.label + ': ' + fmt(c.parsed.x) + '%' } } },
+              scales: { x: { stacked: true, max: 100, title: { display: true, text: 'Porcentaje de trabajadores' } },
+                y: { stacked: true, grid: { display: false } } } }
+          };
+        } else {
+          const horizontal = tipo === 'barras';
+          desc.textContent = 'Solo ' + ETQ.toLowerCase() + ', con escala propia. Color intenso: sobre el promedio (' + fmt(promedio) + '%); claro: bajo el promedio.';
+          alto = horizontal ? Math.max(320, ordenadas.length * 28) : 420;
+          cfg = {
+            type: 'bar',
+            data: { labels: ordenadas.map(f => f.dep), datasets: [{
+                label: ETQ + ' (%)', data: ordenadas.map(f => f.tele),
+                backgroundColor: ordenadas.map(f => f.tele >= promedio ? TEAL : TEAL_CLARO) }] },
+            options: { indexAxis: horizontal ? 'y' : 'x', responsive: true, maintainAspectRatio: false,
+              plugins: { legend: { display: false },
+                tooltip: { callbacks: {
+                    label: c => ETQ + ': ' + fmt(c.parsed[horizontal ? 'x' : 'y']) + '%',
+                    afterLabel: c => 'Presencial: ' + fmt(ordenadas[c.dataIndex].pres) + '%' } } },
+              scales: horizontal
+                      ? { x: { beginAtZero: true, title: { display: true, text: ETQ + ' (%)' } }, y: { grid: { display: false } } }
+                      : { y: { beginAtZero: true, title: { display: true, text: ETQ + ' (%)' } }, x: { grid: { display: false } } } }
+          };
+        }
+        contenedor.style.height = alto + 'px';
+        grafico = new Chart(document.getElementById('graficoTeletrabajo'), cfg);
+      }
+
+      document.querySelectorAll('#selectorTipo button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#selectorTipo button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          dibujar(btn.dataset.tipo);
+        });
+      });
+
+      if (estimado) {
+        document.getElementById('tituloGrafico').textContent = 'No presencial (estimado) por departamento';
+        document.getElementById('kpiPromedio').nextElementSibling.textContent = 'Promedio no presencial (estimado)';
+      }
+      dibujar('barras');
+    }
+
+    // 2. LÓGICA DE FILTRADO Y TABLA OCULTA
+    const buscador = document.getElementById('buscadorTeletrabajo');
+    const btnMostrar = document.getElementById('btnMostrarTodos');
+    const tablaContenedor = document.getElementById('contenedorTabla');
+    const mensajeVacio = document.getElementById('mensajeVacio');
+    const filasTabla = document.querySelectorAll('.fila-departamento');
+    let mostrandoTodos = false;
+
+    buscador.addEventListener('keyup', function() {
+      let textoBusqueda = this.value.toLowerCase();
+      let hayResultados = false;
+
+      if (textoBusqueda === '') {
+        filasTabla.forEach(fila => fila.style.display = mostrandoTodos ? '' : 'none');
+        tablaContenedor.style.display = mostrandoTodos ? 'block' : 'none';
+        mensajeVacio.style.display = mostrandoTodos ? 'none' : 'block';
+        return;
+      }
+
+      filasTabla.forEach(function(fila) {
+        let contenidoFila = fila.textContent.toLowerCase();
+        if(contenidoFila.includes(textoBusqueda)) {
+          fila.style.display = '';
+          hayResultados = true;
+        } else {
+          fila.style.display = 'none';
+        }
+      });
+
+      tablaContenedor.style.display = hayResultados ? 'block' : 'none';
+      mensajeVacio.style.display = hayResultados ? 'none' : 'block';
+
+      if (!hayResultados) {
+        mensajeVacio.innerHTML = '<h1 class="display-4 mb-3">🔍</h1><p>No se encontraron departamentos.</p>';
+      } else {
+        mensajeVacio.innerHTML = '<h1 class="display-4 mb-3">📁</h1><p>Utiliza el buscador para encontrar un departamento o haz clic en "Mostrar Todos".</p>';
+      }
+    });
+
+    btnMostrar.addEventListener('click', function() {
+      mostrandoTodos = !mostrandoTodos;
+      buscador.value = '';
+
+      if(mostrandoTodos) {
+        filasTabla.forEach(fila => fila.style.display = '');
+        tablaContenedor.style.display = 'block';
+        mensajeVacio.style.display = 'none';
+        btnMostrar.textContent = 'Ocultar Lista';
+        btnMostrar.classList.replace('btn-outline-secondary', 'btn-remoto');
+      } else {
+        filasTabla.forEach(fila => fila.style.display = 'none');
+        tablaContenedor.style.display = 'none';
+        mensajeVacio.style.display = 'block';
+        btnMostrar.textContent = 'Mostrar Todos';
+        btnMostrar.classList.replace('btn-remoto', 'btn-outline-secondary');
+      }
+    });
+  });
+</script>
+</body>
+</html>
