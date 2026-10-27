@@ -14,7 +14,7 @@
 <!-- Navegación -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#">📶 Observatorio de Conectividad en el Perú</a>
+        <a class="navbar-brand fw-bold" href="/">📶 Observatorio de Conectividad en el Perú</a>
     </div>
 </nav>
 
@@ -97,8 +97,14 @@
                     label: 'Total Antenas',
                     data: antenas,
                     backgroundColor: [
-                        '#0d6efd', '#dc3545', '#ffc107', '#198754', '#0dcaf0', '#6c757d'
+                        '#031926', /* Azul Noche Oscuro */
+                        '#468189', /* Verde Metálico */
+                        '#77ACA2', /* Verde Suave */
+                        '#9DBEBB', /* Celeste Opal */
+                        '#F4E9CD', /* Crema Champagne */
+                        '#1F4E55'  /* Tono extra oscuro por si hay 6ta operadora */
                     ],
+                    borderColor: '#F4E9CD', /* Borde crema para separar las porciones */
                     borderWidth: 2
                 }]
             },

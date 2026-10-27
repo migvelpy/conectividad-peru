@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velocidad y Latencia - Dashboard Telecom</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], },
+                    colors: {
+                        // Sobreescribimos el gris por defecto con tu Azul Noche y Crema
+                        slate: {
+                            950: '#031926', /* Fondo base oscuro */
+                            900: '#031926', /* Navbars */
+                            800: '#468189', /* Tarjetas */
+                            700: '#77ACA2', /* Bordes y hovers */
+                            400: '#9DBEBB', /* Textos secundarios */
+                            300: '#9DBEBB',
+                            200: '#F4E9CD',
+                            100: '#F4E9CD', /* Textos principales crema */
+                        },
+                        // Colores de marca
+                        brand: {
+                            50: '#F4E9CD',
+                            500: '#77ACA2',
+                            600: '#468189',
+                            900: '#031926',
+                        },
+                        // Para los velocímetros y semáforos (Opcional, mantenemos alertas)
+                        speed: { fast: '#77ACA2', avg: '#f59e0b', slow: '#ef4444' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .speedometer-glow { box-shadow: 0 0 50px -10px rgba(99, 102, 241, 0.25); }
+        .glow-green { box-shadow: 0 0 20px -5px rgba(16, 185, 129, 0.3); }
+        .glow-red { box-shadow: 0 0 20px -5px rgba(239, 68, 68, 0.3); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-brand-500 selection:text-white flex flex-col">
+
+<!-- Navbar Minimalista con Botón de Retroceso -->
+<nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <!-- NUEVO: Enlace que envuelve el logo para volver a la raíz -->
+        <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity" title="Volver al Dashboard">
+            <div class="p-2 bg-brand-600/20 rounded-xl border border-brand-500/30 text-brand-500">
+                <i data-lucide="gauge" class="w-6 h-6"></i>
+            </div>
+            <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                ← Volver al OCP
+            </span>
+        </a>
+        <div class="flex items-center gap-2 text-sm text-slate-400">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Monitoreo Nacional en Vivo</span>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido Principal -->
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Encabezado de la página -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+                Velocidad y Latencia Nacional
+            </h1>
+            <p class="text-slate-400 text-sm mt-1">
+                Análisis comparativo de la calidad de conexión y tiempo de respuesta por distrito.
+            </p>
+        </div>
+        <div class="flex items-center gap-3">
+                <span class="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700 flex items-center gap-1.5">
+                    <i data-lucide="globe" class="w-3.5 h-3.5 text-brand-500"></i> Perú
+                </span>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 1: Tarjetas Grandes de Promedio Nacional (Speedtest Style) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Promedio Bajada -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-900 to-slate-900/90 border border-slate-800 p-6 speedometer-glow group hover:border-brand-500/50 transition-all duration-300">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-brand-500/10 rounded-full blur-2xl group-hover:bg-brand-500/20 transition-all"></div>
+            <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="arrow-down-circle" class="w-4 h-4 text-emerald-400"></i> Promedio Bajada
+                    </span>
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Nacional</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+                <span class="text-5xl font-extrabold tracking-tight text-white font-mono"
+                      th:text="${velNacional != null ? velNacional.prom_bajada_mbps : '0.0'}">
+                        45.8
+                    </span>
+                <span class="text-lg font-medium text-slate-400">Mbps</span>
+            </div>
+            <div class="mt-4 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-500 to-brand-500 h-1.5 rounded-full" style="width: 75%"></div>
+            </div>
+        </div>
+
+        <!-- Promedio Subida -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-900 to-slate-900/90 border border-slate-800 p-6 group hover:border-indigo-500/50 transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="arrow-up-circle" class="w-4 h-4 text-indigo-400"></i> Promedio Subida
+                    </span>
+                <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">Nacional</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+                    <span class="text-5xl font-extrabold tracking-tight text-white font-mono"
+                          th:text="${velNacional != null && velNacional.containsKey('prom_subida_mbps') ? velNacional.prom_subida_mbps : '18.2'}">
+                        18.2
+                    </span>
+                <span class="text-lg font-medium text-slate-400">Mbps</span>
+            </div>
+            <div class="mt-4 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 50%"></div>
+            </div>
+        </div>
+
+        <!-- Promedio Latencia -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-900 to-slate-900/90 border border-slate-800 p-6 group hover:border-amber-500/50 transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="activity" class="w-4 h-4 text-amber-400"></i> Latencia Promedio
+                    </span>
+                <span class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">Ping</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+                    <span class="text-5xl font-extrabold tracking-tight text-white font-mono"
+                          th:text="${velNacional != null && velNacional.containsKey('prom_latencia_ms') ? velNacional.prom_latencia_ms : '24'}">
+                        24
+                    </span>
+                <span class="text-lg font-medium text-slate-400">ms</span>
+            </div>
+            <div class="mt-4 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-amber-500 h-1.5 rounded-full" style="width: 35%"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SECCIÓN 2: Tabla de Ranking de Distritos -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+
+        <!-- Barra Superior de Control / Búsqueda + Botón Mostrar Todos -->
+        <div class="p-5 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/50">
+            <div>
+                <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i>
+                    Ranking de Distritos
+                </h2>
+                <p class="text-xs text-slate-400">Listado ordenado por velocidad de descarga y tiempo de respuesta</p>
+            </div>
+
+            <!-- Controles de búsqueda y despliegue -->
+            <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
+                <div class="relative w-full sm:w-72">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                    <input type="text" id="buscadorVelocidad" placeholder="Buscar distrito o departamento..."
+                           class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-xl pl-9 pr-4 py-2 focus:outline-none focus:border-brand-500 transition-colors placeholder:text-slate-600">
+                </div>
+                <button id="btnMostrarTodos" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold rounded-xl transition-colors border border-slate-700 whitespace-nowrap">
+                    Mostrar Todos
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla (Oculta por defecto para no saturar 1800 filas) -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse" id="tablaVelocidad" style="display: none;">
+                <thead>
+                <tr class="border-b border-slate-800 bg-slate-950/50 text-slate-400 text-xs uppercase tracking-wider font-semibold">
+                    <th class="py-4 px-6">Posición / Distrito</th>
+                    <th class="py-4 px-6">Departamento</th>
+                    <th class="py-4 px-6 text-right">Velocidad Bajada</th>
+                    <th class="py-4 px-6 text-right">Latencia</th>
+                    <th class="py-4 px-6 text-center">Estado Conexión</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-sm" id="tablaCuerpo">
+
+                <!-- ITERACIÓN THYMELEAF -->
+                <tr th:each="dist, iter : ${rankingDistritos}" class="hover:bg-slate-800/40 transition-colors group fila-distrito">
+
+                    <!-- Distrito y Posición -->
+                    <td class="py-4 px-6 font-medium text-white flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700/60 flex items-center justify-center text-xs font-mono font-bold text-slate-400 group-hover:border-brand-500/50 group-hover:text-brand-400"
+                              th:text="${iter.count}">
+                            1
+                        </span>
+                        <span class="font-semibold text-slate-100" th:text="${dist.nombdist}">Miraflores</span>
+                    </td>
+
+                    <!-- Departamento -->
+                    <td class="py-4 px-6 text-slate-400">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span th:text="${dist.nombdep}">LIMA</span>
+                        </div>
+                    </td>
+
+                    <!-- Velocidad Bajada -->
+                    <td class="py-4 px-6 text-right font-mono">
+                        <div class="inline-flex items-center justify-end gap-1.5 px-2.5 py-1 rounded-lg font-bold"
+                             th:classappend="${dist.mbps_bajada >= 50} ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 glow-green' : (${dist.mbps_bajada >= 20} ? 'text-slate-200' : 'text-amber-400')">
+                            <i th:if="${dist.mbps_bajada >= 50}" data-lucide="zap" class="w-3.5 h-3.5 text-emerald-400"></i>
+                            <span th:text="${#numbers.formatDecimal(dist.mbps_bajada, 1, 1)} + ' Mbps'">85.4 Mbps</span>
+                        </div>
+                    </td>
+
+                    <!-- Latencia -->
+                    <td class="py-4 px-6 text-right font-mono">
+                        <div class="inline-flex items-center justify-end gap-1.5 px-2.5 py-1 rounded-lg font-semibold"
+                             th:classappend="${dist.latencia_ms > 60} ? 'bg-red-500/10 text-red-400 border border-red-500/20 glow-red' : (${dist.latencia_ms > 35} ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'text-slate-300')">
+                            <i th:if="${dist.latencia_ms > 60}" data-lucide="alert-triangle" class="w-3.5 h-3.5 text-red-400"></i>
+                            <span th:text="${dist.latencia_ms} + ' ms'">18 ms</span>
+                        </div>
+                    </td>
+
+                    <!-- Estado Visual Badge -->
+                    <td class="py-4 px-6 text-center">
+                        <span th:if="${dist.mbps_bajada >= 50 && dist.latencia_ms <= 35}"
+                              class="px-2.5 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-medium inline-flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Excelente
+                        </span>
+                        <span th:if="${dist.mbps_bajada < 50 && dist.mbps_bajada >= 20 && dist.latencia_ms <= 60}"
+                              class="px-2.5 py-1 text-xs rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 font-medium inline-flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Aceptable
+                        </span>
+                        <span th:if="${dist.mbps_bajada < 20 || dist.latencia_ms > 60}"
+                              class="px-2.5 py-1 text-xs rounded-full bg-red-500/10 text-red-400 border border-red-500/30 font-medium inline-flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Deficiente
+                        </span>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Mensaje Inicial (Aparece cuando la tabla está oculta) -->
+            <div id="mensajeInicial" class="text-center py-12 text-slate-500">
+                <i data-lucide="folder-search" class="w-12 h-12 mx-auto mb-3 text-slate-600"></i>
+                <p>Utiliza el buscador para encontrar un distrito o haz clic en "Mostrar Todos".</p>
+            </div>
+
+            <!-- Mensaje Sin Resultados -->
+            <div id="mensajeSinResultados" class="text-center py-12 text-slate-500" style="display: none;">
+                <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 text-slate-600"></i>
+                <p>No se encontraron distritos ni departamentos con ese nombre.</p>
+            </div>
+
+        </div>
+
+        <!-- Footer de la Tabla -->
+        <div class="px-6 py-4 border-t border-slate-800 bg-slate-950/30 text-xs text-slate-500 flex justify-between items-center">
+            <span>Mostrando registros inyectados por la base de datos</span>
+            <span class="font-mono">Métrica: Mbps / Latencia en milisegundos (ms)</span>
+        </div>
+    </div>
+
+</main>
+
+<!-- Script de Filtrado Inteligente y Botón Toggle -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicializar iconos
+        lucide.createIcons();
+
+        const buscador = document.getElementById('buscadorVelocidad');
+        const btnMostrar = document.getElementById('btnMostrarTodos');
+        const tabla = document.getElementById('tablaVelocidad');
+        const mensajeInicial = document.getElementById('mensajeInicial');
+        const mensajeSinResultados = document.getElementById('mensajeSinResultados');
+        const filas = document.querySelectorAll('.fila-distrito');
+        let mostrandoTodos = false;
+
+        // Búsqueda en tiempo real
+        buscador.addEventListener('keyup', function() {
+            let textoBusqueda = this.value.toLowerCase();
+            let hayResultados = false;
+
+            if (textoBusqueda === '') {
+                filas.forEach(fila => fila.style.display = mostrandoTodos ? '' : 'none');
+                tabla.style.display = mostrandoTodos ? 'table' : 'none';
+                mensajeInicial.style.display = mostrandoTodos ? 'none' : 'block';
+                mensajeSinResultados.style.display = 'none';
+                return;
+            }
+
+            filas.forEach(function(fila) {
+                let contenidoFila = fila.textContent.toLowerCase();
+                if(contenidoFila.includes(textoBusqueda)) {
+                    fila.style.display = '';
+                    hayResultados = true;
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+
+            tabla.style.display = hayResultados ? 'table' : 'none';
+
+            if (!hayResultados) {
+                mensajeInicial.style.display = 'none';
+                mensajeSinResultados.style.display = 'block';
+            } else {
+                mensajeInicial.style.display = 'none';
+                mensajeSinResultados.style.display = 'none';
+            }
+        });
+
+        // Toggle del botón "Mostrar Todos"
+        btnMostrar.addEventListener('click', function() {
+            mostrandoTodos = !mostrandoTodos;
+            buscador.value = '';
+
+            if(mostrandoTodos) {
+                filas.forEach(fila => fila.style.display = '');
+                tabla.style.display = 'table';
+                mensajeInicial.style.display = 'none';
+                mensajeSinResultados.style.display = 'none';
+
+                btnMostrar.textContent = 'Ocultar Lista';
+                btnMostrar.classList.remove('bg-slate-800', 'hover:bg-slate-700', 'border-slate-700');
+                btnMostrar.classList.add('bg-brand-600', 'hover:bg-brand-700', 'border-brand-600');
+            } else {
+                filas.forEach(fila => fila.style.display = 'none');
+                tabla.style.display = 'none';
+                mensajeInicial.style.display = 'block';
+                mensajeSinResultados.style.display = 'none';
+
+                btnMostrar.textContent = 'Mostrar Todos';
+                btnMostrar.classList.remove('bg-brand-600', 'hover:bg-brand-700', 'border-brand-600');
+                btnMostrar.classList.add('bg-slate-800', 'hover:bg-slate-700', 'border-slate-700');
+            }
+        });
+    });
+</script>
+</body>
+</html>
